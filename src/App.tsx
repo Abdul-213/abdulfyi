@@ -6,7 +6,7 @@ const TAGLINE = 'Software Engineer'
 const LINKEDIN = 'https://www.linkedin.com/in/abdulhannan-ahmad-0447b7149/'
 const GITHUB = 'https://github.com/Abdul-213'
 const EMAIL = 'mailto:m.abdulhannan.ahmad@gmail.com'
-const CV = '/src/assets/Abdul_CV.pdf'
+const CV = '/Abdul_CV.pdf'
 
 interface StatData {
   value: string
