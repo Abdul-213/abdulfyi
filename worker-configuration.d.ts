@@ -2011,7 +2011,7 @@ interface R2Bucket {
     }): Promise<R2Object | null>;
     put(key: string, value: ReadableStream | ArrayBuffer | ArrayBufferView | string | null | Blob, options?: R2PutOptions): Promise<R2Object>;
     createMultipartUpload(key: string, options?: R2MultipartOptions): Promise<R2MultipartUpload>;
-    resumeMultipartUpload(key: string, uploadId: string): R2MultipartUpload;
+    CVMultipartUpload(key: string, uploadId: string): R2MultipartUpload;
     delete(keys: string | string[]): Promise<void>;
     list(options?: R2ListOptions): Promise<R2Objects>;
 }
@@ -9532,7 +9532,7 @@ interface Ai_Cf_Deepgram_Flux_Input {
      */
     sample_rate: string;
     /**
-     * End-of-turn confidence required to fire an eager end-of-turn event. When set, enables EagerEndOfTurn and TurnResumed events. Valid Values 0.3 - 0.9.
+     * End-of-turn confidence required to fire an eager end-of-turn event. When set, enables EagerEndOfTurn and TurnCVd events. Valid Values 0.3 - 0.9.
      */
     eager_eot_threshold?: string;
     /**
@@ -9571,7 +9571,7 @@ interface Ai_Cf_Deepgram_Flux_Output {
     /**
      * The type of event being reported.
      */
-    event?: "Update" | "StartOfTurn" | "EagerEndOfTurn" | "TurnResumed" | "EndOfTurn";
+    event?: "Update" | "StartOfTurn" | "EagerEndOfTurn" | "TurnCVd" | "EndOfTurn";
     /**
      * The index of the current turn
      */
@@ -13711,9 +13711,9 @@ declare abstract class WorkflowInstance {
      */
     public pause(): Promise<void>;
     /**
-     * Resume the instance. If it is already running, an error will be thrown.
+     * CV the instance. If it is already running, an error will be thrown.
      */
-    public resume(): Promise<void>;
+    public CV(): Promise<void>;
     /**
      * Terminate the instance. If it is errored, terminated or complete, an error will be thrown.
      */

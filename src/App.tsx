@@ -1,120 +1,143 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useState, useEffect } from 'react'
 import './App.css'
 
+const NAME = 'abdul'
+const TAGLINE = 'Software Engineer'
+const LINKEDIN = 'https://www.linkedin.com/in/abdulhannan-ahmad-0447b7149/'
+const GITHUB = 'https://github.com/Abdul-213'
+const EMAIL = 'mailto:m.abdulhannan.ahmad@gmail.com'
+const CV = 'src/Abdul_CV.pdf'
+
+interface StatData {
+  value: string
+  label: string
+}
+
+interface WorkData {
+  name: string
+  url: string
+  blurb: string
+  year: string
+  tags: string[]
+  stats: StatData[]
+}
+
+const WORK: WorkData[] = [
+  {
+    name: 'Riftcodex',
+    url: 'https://riftcodex.com',
+    blurb: 'A free rest API for Riftbound, a trading card game. The backend was built using FastAPI, and runs on Railway. The frontend is built with React/Typescript and deployed on Cloudflare Pages. Added observability with Prometheus, Loki, Tempo and Grafana.',
+    year: '2026',
+    tags: ['python', 'fastapi', 'prometheus', 'loki', 'grafana', 'react', 'cloudflare', 'railway', 'mongodb'],
+    stats: [
+      { value: '12K', label: 'visitors / month' },
+      { value: '296K', label: 'requests / month' },
+    ],
+  },
+  {
+    name: 'MTGuru',
+    url: 'https://mtguru.com',
+    blurb: 'Natural language search engine for Magic: The Gathering cards using Retrieval Augmented Generation (RAG). Backend built with Go, running on AWS and utilizing Cloudflare Vectorize for embedding generation and storage. The frontend is built with React and hosted on Cloudflare Pages.',
+    year: '2025',
+    tags: ['go', 'aws', 'react', 'cloudflare vectorize', 'react'],
+    stats: [
+    ],
+  },
+  {
+    name: 'Multiplayer Administration Tool',
+    url: '',
+    blurb: 'An administration tool for a multiplayer game community server usng Python (asyncio) and MongoDB, enabling real time monitoring and management of players. Metrics are collected and aggregated in Grafana',
+    year: '2026',
+    tags: ['python', 'asyncio', 'mongodb', 'cloudflare', 'grafana', 'prometheus'],
+    stats: [
+      { value: '31,000', label: 'registered users' },
+      { value: '1,500', label: 'active users / week' },
+    ],
+  }
+]
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [dark, setDark] = useState(() => {
+    const stored = localStorage.getItem('theme')
+    if (stored) return stored === 'dark'
+    return true
+  })
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-dark', String(dark))
+    localStorage.setItem('theme', dark ? 'dark' : 'light')
+  }, [dark])
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <button
+        className="theme-toggle"
+        onClick={() => setDark(d => !d)}
+        aria-label="Toggle dark mode"
+      >
+        {dark ? '☀' : '☾'}
+      </button>
 
-      <div className="ticks"></div>
+      <div className="page-inner">
+        <h1 className="name">
+          $ whoami {NAME}<span className="caret">█</span>
+        </h1>
+        <p className="tagline">// {TAGLINE}</p>
+        <a className="tagline-email" href={EMAIL}>m.abdulhannan.ahmad@gmail.com</a>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="social-links">
+          <a className="social-link" href={LINKEDIN} target="_blank" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+          <a className="social-link" href={GITHUB} target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          <a className="social-link" href={CV} target="_blank" rel="noopener noreferrer">
+            CV
+          </a>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+        <p className="eyebrow">─── Personal Projects ───</p>
+
+        <div className="work-list">
+          {WORK.map(work => (
+            <div className="work-row" key={work.name}>
+              <div className="work-header">
+                <a
+                  className="work-title"
+                  href={work.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {work.name}
+                </a>
+                <span className="work-arrow">→</span>
+              </div>
+              <div className="work-details">
+                <div className="work-blurb">{work.blurb}</div>
+                <dl className="work-stats">
+                  {work.stats.map(stat => (
+                    <div className="stat" key={stat.label}>
+                      <dt className="stat-value">{stat.value}</dt>
+                      <dd className="stat-label">{stat.label}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <div className="work-tags">
+                  {work.tags.map(tag => (
+                    <span className="tag" key={tag}>{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <footer className="footer">
+          <span className="footer-left">© 2026 {NAME}</span>
+          <span className="footer-right">↵ end of file</span>
+        </footer>
+      </div>
     </>
   )
 }
