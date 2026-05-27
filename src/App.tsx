@@ -6,7 +6,7 @@ const TAGLINE = 'Software Engineer'
 const LINKEDIN = 'https://www.linkedin.com/in/abdulhannan-ahmad-0447b7149/'
 const GITHUB = 'https://github.com/Abdul-213'
 const EMAIL = 'mailto:m.abdulhannan.ahmad@gmail.com'
-const CV = 'src/Abdul_CV.pdf'
+const CV = 'src/assets/Abdul_CV.pdf'
 
 interface StatData {
   value: string
@@ -46,7 +46,7 @@ const WORK: WorkData[] = [
   {
     name: 'Multiplayer Administration Tool',
     url: '',
-    blurb: 'An administration tool for a multiplayer game community server usng Python (asyncio) and MongoDB, enabling real time monitoring and management of players. Metrics are collected and aggregated in Grafana',
+    blurb: 'An administration tool for a multiplayer game community server. Built using Python (asyncio) and MongoDB, enabling real time monitoring and management of players. Included dashboards in Grafana with metrics collected via Prometheus.',
     year: '2026',
     tags: ['python', 'asyncio', 'mongodb', 'cloudflare', 'grafana', 'prometheus'],
     stats: [
