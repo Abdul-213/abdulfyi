@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import './App.css'
 
 const NAME = 'abdul'
@@ -16,8 +16,7 @@ interface StatData {
 interface WorkData {
   name: string
   url: string
-  blurb: string
-  year: string
+  blurb: ReactNode
   tags: string[]
   stats: StatData[]
 }
@@ -26,8 +25,7 @@ const WORK: WorkData[] = [
   {
     name: 'Riftcodex',
     url: 'https://riftcodex.com',
-    blurb: 'A free rest API for Riftbound, a trading card game. The backend was built using FastAPI, and runs on Railway. The frontend is built with React/Typescript and deployed on Cloudflare Pages. Added observability with Prometheus, Loki, Tempo and Grafana.',
-    year: '2026',
+    blurb: <>Built a free rest API for <a className="work-blurb-link" href="https://riftbound.leagueoflegends.com/en-us/" target="_blank" rel="noopener noreferrer">Riftbound</a> using FastAPI and deployed it on Railway. Developed the frontend with React/Typescript, hosted on Cloudflare Pages and implemented observability using Prometheus, Loki and Tempo with dashboards in Grafana.</>,
     tags: ['python', 'fastapi', 'prometheus', 'loki', 'grafana', 'react', 'cloudflare', 'railway', 'mongodb'],
     stats: [
       { value: '12K', label: 'visitors / month' },
@@ -37,17 +35,15 @@ const WORK: WorkData[] = [
   {
     name: 'MTGuru',
     url: 'https://mtguru.com',
-    blurb: 'Natural language search engine for Magic: The Gathering cards using Retrieval Augmented Generation (RAG). Backend built with Go, running on AWS and utilizing Cloudflare Vectorize for embedding generation and storage. The frontend is built with React and hosted on Cloudflare Pages.',
-    year: '2025',
-    tags: ['go', 'aws', 'react', 'cloudflare vectorize', 'react'],
+    blurb: <>Built a natural language search engine for <a className="work-blurb-link" href="https://magic.wizards.com/en" target="_blank" rel="noopener noreferrer">Magic: The Gathering</a> cards using Retrieval Augmented Generation (RAG). Developed the backend in Go, deployed it on AWS with Cloudflare Vectorize handling embedding and storage. Created the frontend with React and deployed it on Cloudflare Pages.</>,
+    tags: ['go', 'aws', 'react', 'cloudflare vectorize'],
     stats: [
     ],
   },
   {
     name: 'Multiplayer Administration Tool',
     url: '',
-    blurb: 'An administration tool for a multiplayer game community server. Built using Python (asyncio) and MongoDB, enabling real time monitoring and management of players. Included dashboards in Grafana with metrics collected via Prometheus.',
-    year: '2026',
+    blurb: 'Built an administration tool for a multiplayer game community server using Asyncio (Python) and MongoDB, enabling real-time player monitoring and management. Added Grafana dashboards with metrics from Prometheus and MongoDB for observability.',
     tags: ['python', 'asyncio', 'mongodb', 'cloudflare', 'grafana', 'prometheus'],
     stats: [
       { value: '31,000', label: 'registered users' },
@@ -57,15 +53,18 @@ const WORK: WorkData[] = [
 ]
 
 function App() {
-  const [dark, setDark] = useState(() => {
-    const stored = localStorage.getItem('theme')
-    if (stored) return stored === 'dark'
-    return true
-  })
+  // index.html sets data-dark before first paint
+  const [dark, setDark] = useState(
+    () => document.documentElement.getAttribute('data-dark') !== 'false'
+  )
 
   useEffect(() => {
     document.documentElement.setAttribute('data-dark', String(dark))
-    localStorage.setItem('theme', dark ? 'dark' : 'light')
+    try {
+      localStorage.setItem('theme', dark ? 'dark' : 'light')
+    } catch {
+      // Storage blocked: the theme still applies for this visit
+    }
   }, [dark])
 
   return (
@@ -73,14 +72,15 @@ function App() {
       <button
         className="theme-toggle"
         onClick={() => setDark(d => !d)}
-        aria-label="Toggle dark mode"
+        aria-label="Dark mode"
+        aria-pressed={dark}
       >
         {dark ? '☀' : '☾'}
       </button>
 
       <div className="page-inner">
         <h1 className="name">
-          $ whoami {NAME}<span className="caret">█</span>
+          $ whoami {NAME}<span className="caret" aria-hidden="true">█</span>
         </h1>
         <p className="tagline">// {TAGLINE}</p>
         <a className="tagline-email" href={EMAIL}>m.abdulhannan.ahmad@gmail.com</a>
@@ -97,32 +97,37 @@ function App() {
           </a>
         </div>
 
-        <p className="eyebrow">─── Personal Projects ───</p>
+        <h2 className="section-title">
+          <span aria-hidden="true">─── </span>Personal Projects<span aria-hidden="true"> ───</span>
+        </h2>
 
         <div className="work-list">
           {WORK.map(work => (
             <div className="work-row" key={work.name}>
               <div className="work-header">
-                <a
-                  className="work-title"
-                  href={work.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {work.name}
-                </a>
-                <span className="work-arrow">→</span>
+                <h3 className="work-title">
+                  {work.url ? (
+                    <a href={work.url} target="_blank" rel="noopener noreferrer">
+                      {work.name}
+                    </a>
+                  ) : (
+                    work.name
+                  )}
+                </h3>
+                {work.url && <span className="work-arrow" aria-hidden="true">→</span>}
               </div>
               <div className="work-details">
                 <div className="work-blurb">{work.blurb}</div>
-                <dl className="work-stats">
-                  {work.stats.map(stat => (
-                    <div className="stat" key={stat.label}>
-                      <dt className="stat-value">{stat.value}</dt>
-                      <dd className="stat-label">{stat.label}</dd>
-                    </div>
-                  ))}
-                </dl>
+                {work.stats.length > 0 && (
+                  <dl className="work-stats">
+                    {work.stats.map(stat => (
+                      <div className="stat" key={stat.label}>
+                        <dt className="stat-label">{stat.label}</dt>
+                        <dd className="stat-value">{stat.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
                 <div className="work-tags">
                   {work.tags.map(tag => (
                     <span className="tag" key={tag}>{tag}</span>
