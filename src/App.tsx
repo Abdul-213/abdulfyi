@@ -2,10 +2,11 @@ import { useState, useEffect, type ReactNode } from 'react'
 import './App.css'
 
 const NAME = 'abdul'
-const TAGLINE = 'Software Engineer'
+// Non-breaking spaces keep each title on one line when the tagline wraps
+const TAGLINE = 'Software Engineer | Platform Engineer'
 const LINKEDIN = 'https://www.linkedin.com/in/abdulhannan-ahmad-0447b7149/'
 const GITHUB = 'https://github.com/Abdul-213'
-const EMAIL = 'mailto:m.abdulhannan.ahmad@gmail.com'
+const EMAIL = 'me@abdul.fyi'
 const CV = 'https://www.files.abdul.fyi/Abdul_CV.pdf'
 
 interface CertData {
@@ -36,11 +37,13 @@ interface WorkData {
   blurb: ReactNode
   tags: string[]
   stats: StatData[]
+  pinned?: boolean
 }
 
 const WORK: WorkData[] = [
   {
     name: 'Riftcodex',
+    pinned: true,
     url: 'https://riftcodex.com',
     blurb: <>Built a free rest API for <a className="work-blurb-link" href="https://riftbound.leagueoflegends.com/en-us/" target="_blank" rel="noopener noreferrer">Riftbound</a> using FastAPI and deployed it on Railway. Developed the frontend with React/Typescript, hosted on Cloudflare Pages and implemented observability using Prometheus, Loki and Tempo with dashboards in Grafana.</>,
     tags: ['python', 'fastapi', 'prometheus', 'loki', 'grafana', 'react', 'cloudflare', 'railway', 'mongodb'],
@@ -51,6 +54,7 @@ const WORK: WorkData[] = [
   },
   {
     name: 'Domesday',
+    pinned: true,
     url: 'https://domesday.m-abdulhannan-ahmad.workers.dev',
     blurb: 'Built a site that shows crime, deprivation and income statistics for any postcode or place in England, using data from the UK Government, police forces and the Office for National Statistics. Developed the frontend with Next.js/TypeScript and a small TypeScript API, with figures pre-computed from the raw government files. Deployed on Cloudflare Workers.',
     tags: ['nextjs', 'typescript', 'cloudflare workers'],
@@ -58,6 +62,7 @@ const WORK: WorkData[] = [
   },
   {
     name: 'MTGuru',
+    pinned: true,
     url: 'https://mtguru.com',
     blurb: <>Built a natural language search engine for <a className="work-blurb-link" href="https://magic.wizards.com/en" target="_blank" rel="noopener noreferrer">Magic: The Gathering</a> cards using Retrieval Augmented Generation (RAG). Developed the backend in Go, deployed it on AWS with Cloudflare Vectorize handling embedding and storage. Created the frontend with React and deployed it on Cloudflare Pages.</>,
     tags: ['go', 'aws', 'react', 'cloudflare vectorize'],
@@ -75,25 +80,27 @@ const WORK: WorkData[] = [
   },
 ]
 
-// The first three projects are featured; the rest rotate in the carousel
-const FEATURED = WORK.slice(0, 3)
-const MORE = WORK.slice(3)
-
-const AUTOPLAY_MS = 6000
-
 function ProjectRow({ work }: { work: WorkData }) {
   return (
     <div className="work-row">
       <div className="work-header">
-        <h3 className="work-title">
-          {work.url ? (
-            <a href={work.url} target="_blank" rel="noopener noreferrer">
-              {work.name}
-            </a>
-          ) : (
-            work.name
+        <div className="work-title-group">
+          <h3 className="work-title">
+            {work.url ? (
+              <a href={work.url} target="_blank" rel="noopener noreferrer">
+                {work.name}
+              </a>
+            ) : (
+              work.name
+            )}
+          </h3>
+          {work.pinned && (
+            <span className="pinned" title="Pinned project">
+              <span aria-hidden="true">★</span>
+              <span className="visually-hidden">Pinned project</span>
+            </span>
           )}
-        </h3>
+        </div>
         {work.url && <span className="work-arrow" aria-hidden="true">→</span>}
       </div>
       <div className="work-details">
@@ -115,81 +122,6 @@ function ProjectRow({ work }: { work: WorkData }) {
         </div>
       </div>
     </div>
-  )
-}
-
-// Shows one project at a time, sliding vertically between them
-function ProjectCarousel({ projects }: { projects: WorkData[] }) {
-  const [index, setIndex] = useState(0)
-  // No direction until the first change, so the initial slide doesn't animate in
-  const [direction, setDirection] = useState<'up' | 'down' | null>(null)
-  const [playing, setPlaying] = useState(
-    () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
-  const [hovered, setHovered] = useState(false)
-  const count = projects.length
-
-  const go = (step: 1 | -1) => {
-    setDirection(step === 1 ? 'up' : 'down')
-    setIndex(i => (i + step + count) % count)
-  }
-
-  useEffect(() => {
-    if (count < 2 || !playing || hovered) return
-    const id = window.setTimeout(() => go(1), AUTOPLAY_MS)
-    return () => window.clearTimeout(id)
-  })
-
-  // Manual navigation hands control to the visitor
-  const navigate = (step: 1 | -1) => {
-    setPlaying(false)
-    go(step)
-  }
-
-  const work = projects[index]
-
-  return (
-    <section
-      className="carousel"
-      aria-roledescription="carousel"
-      aria-label="More projects"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocus={() => setHovered(true)}
-      onBlur={() => setHovered(false)}
-    >
-      <div className="carousel-viewport" aria-live={playing ? 'off' : 'polite'}>
-        <div
-          className={direction ? `carousel-slide carousel-slide-${direction}` : 'carousel-slide'}
-          key={index}
-          role="group"
-          aria-roledescription="slide"
-          aria-label={`${index + 1} of ${count}`}
-        >
-          <ProjectRow work={work} />
-        </div>
-      </div>
-      {count > 1 && (
-        <div className="carousel-controls">
-          <button className="carousel-button" onClick={() => navigate(-1)} aria-label="Previous project">
-            ↑ prev
-          </button>
-          <button className="carousel-button" onClick={() => navigate(1)} aria-label="Next project">
-            ↓ next
-          </button>
-          <button
-            className="carousel-button"
-            onClick={() => setPlaying(p => !p)}
-            aria-label={playing ? 'Pause carousel' : 'Play carousel'}
-          >
-            {playing ? 'pause' : 'play'}
-          </button>
-          <span className="carousel-count" aria-hidden="true">
-            {index + 1} / {count}
-          </span>
-        </div>
-      )}
-    </section>
   )
 }
 
@@ -224,7 +156,7 @@ function App() {
           $ whoami {NAME}<span className="caret" aria-hidden="true">█</span>
         </h1>
         <p className="tagline">// {TAGLINE}</p>
-        <a className="tagline-email" href={EMAIL}>m.abdulhannan.ahmad@gmail.com</a>
+        <a className="tagline-email" href={`mailto:${EMAIL}`}>{EMAIL}</a>
         <ul className="certs" aria-label="Certifications">
           {CERTS.map(cert => (
             <li key={cert.name}>
@@ -254,19 +186,10 @@ function App() {
         </h2>
 
         <div className="work-list">
-          {FEATURED.map(work => (
+          {WORK.map(work => (
             <ProjectRow work={work} key={work.name} />
           ))}
         </div>
-
-        {MORE.length > 0 && (
-          <>
-            <h2 className="section-title">
-              <span aria-hidden="true">─── </span>More Projects<span aria-hidden="true"> ───</span>
-            </h2>
-            <ProjectCarousel projects={MORE} />
-          </>
-        )}
 
         <footer className="footer">
           <span className="footer-left">© 2026 {NAME}</span>
