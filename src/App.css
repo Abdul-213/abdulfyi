@@ -79,6 +79,43 @@
   color: var(--fg);
 }
 
+/* ─── Certifications ─── */
+
+.certs {
+  list-style: none;
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--cert);
+}
+
+.certs li {
+  /* Wrapped lines align after the '// ' prefix */
+  padding-left: 3ch;
+  text-indent: -3ch;
+}
+
+.certs li + li {
+  margin-top: 4px;
+}
+
+.certs li::before {
+  content: '// ';
+  color: var(--muted);
+}
+
+.certs a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-underline-offset: 3px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.certs a:hover {
+  color: var(--fg);
+  text-decoration-color: currentColor;
+}
+
 /* ─── Social links ─── */
 
 .social-links {
@@ -266,6 +303,14 @@
   .social-link {
     min-height: 44px;
     padding: 0 14px;
+  }
+
+  .certs li + li {
+    margin-top: 12px;
+  }
+
+  .certs a {
+    padding-block: 10px;
   }
 
   .tagline-email {

@@ -8,6 +8,23 @@ const GITHUB = 'https://github.com/Abdul-213'
 const EMAIL = 'mailto:m.abdulhannan.ahmad@gmail.com'
 const CV = 'https://www.files.abdul.fyi/Abdul_CV.pdf'
 
+interface CertData {
+  name: string
+  url: string
+}
+
+// Add the Credly URL to a certification to make it a link
+const CERTS: CertData[] = [
+  {
+    name: 'Certified Kubernetes Application Developer',
+    url: 'https://www.credly.com/badges/85baebc1-16fb-4db6-8e1b-6b92f355eff6',
+  },
+  {
+    name: 'HashiCorp Certified: Terraform Associate (004)',
+    url: '',
+  },
+]
+
 interface StatData {
   value: string
   label: string
@@ -84,6 +101,17 @@ function App() {
         </h1>
         <p className="tagline">// {TAGLINE}</p>
         <a className="tagline-email" href={EMAIL}>m.abdulhannan.ahmad@gmail.com</a>
+        <ul className="certs" aria-label="Certifications">
+          {CERTS.map(cert => (
+            <li key={cert.name}>
+              {cert.url ? (
+                <a href={cert.url} target="_blank" rel="noopener noreferrer">{cert.name}</a>
+              ) : (
+                cert.name
+              )}
+            </li>
+          ))}
+        </ul>
 
         <div className="social-links">
           <a className="social-link" href={LINKEDIN} target="_blank" rel="noopener noreferrer">
