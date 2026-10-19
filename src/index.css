@@ -8,6 +8,7 @@
   --stat-value: #856000;
   --stat-label: #7a5f32;
   --tag: #2b7272;
+  --cert: #2d7038;
 }
 
 html[data-dark="true"] {
@@ -20,6 +21,7 @@ html[data-dark="true"] {
   --stat-value: #f5c542;
   --stat-label: #b8a074;
   --tag: #7ec8c8;
+  --cert: #8fd694;
 }
 
 *,
