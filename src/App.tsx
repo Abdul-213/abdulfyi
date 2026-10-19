@@ -33,12 +33,18 @@ const WORK: WorkData[] = [
     ],
   },
   {
+    name: 'Domesday',
+    url: 'https://domesday.m-abdulhannan-ahmad.workers.dev',
+    blurb: 'Built a site that shows crime, deprivation and income statistics for any postcode or place in England, using data from the UK Government, police forces and the Office for National Statistics. Developed the frontend with Next.js/TypeScript and a small TypeScript API, with figures pre-computed from the raw government files. Deployed on Cloudflare Workers.',
+    tags: ['nextjs', 'typescript', 'cloudflare workers'],
+    stats: [],
+  },
+  {
     name: 'MTGuru',
     url: 'https://mtguru.com',
     blurb: <>Built a natural language search engine for <a className="work-blurb-link" href="https://magic.wizards.com/en" target="_blank" rel="noopener noreferrer">Magic: The Gathering</a> cards using Retrieval Augmented Generation (RAG). Developed the backend in Go, deployed it on AWS with Cloudflare Vectorize handling embedding and storage. Created the frontend with React and deployed it on Cloudflare Pages.</>,
     tags: ['go', 'aws', 'react', 'cloudflare vectorize'],
-    stats: [
-    ],
+    stats: [],
   },
   {
     name: 'Multiplayer Administration Tool',
@@ -49,8 +55,126 @@ const WORK: WorkData[] = [
       { value: '31,000', label: 'registered users' },
       { value: '1,500', label: 'active users / week' },
     ],
-  }
+  },
 ]
+
+// The first three projects are featured; the rest rotate in the carousel
+const FEATURED = WORK.slice(0, 3)
+const MORE = WORK.slice(3)
+
+const AUTOPLAY_MS = 6000
+
+function ProjectRow({ work }: { work: WorkData }) {
+  return (
+    <div className="work-row">
+      <div className="work-header">
+        <h3 className="work-title">
+          {work.url ? (
+            <a href={work.url} target="_blank" rel="noopener noreferrer">
+              {work.name}
+            </a>
+          ) : (
+            work.name
+          )}
+        </h3>
+        {work.url && <span className="work-arrow" aria-hidden="true">→</span>}
+      </div>
+      <div className="work-details">
+        <div className="work-blurb">{work.blurb}</div>
+        {work.stats.length > 0 && (
+          <dl className="work-stats">
+            {work.stats.map(stat => (
+              <div className="stat" key={stat.label}>
+                <dt className="stat-label">{stat.label}</dt>
+                <dd className="stat-value">{stat.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        <div className="work-tags">
+          {work.tags.map(tag => (
+            <span className="tag" key={tag}>{tag}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Shows one project at a time, sliding vertically between them
+function ProjectCarousel({ projects }: { projects: WorkData[] }) {
+  const [index, setIndex] = useState(0)
+  // No direction until the first change, so the initial slide doesn't animate in
+  const [direction, setDirection] = useState<'up' | 'down' | null>(null)
+  const [playing, setPlaying] = useState(
+    () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+  const [hovered, setHovered] = useState(false)
+  const count = projects.length
+
+  const go = (step: 1 | -1) => {
+    setDirection(step === 1 ? 'up' : 'down')
+    setIndex(i => (i + step + count) % count)
+  }
+
+  useEffect(() => {
+    if (count < 2 || !playing || hovered) return
+    const id = window.setTimeout(() => go(1), AUTOPLAY_MS)
+    return () => window.clearTimeout(id)
+  })
+
+  // Manual navigation hands control to the visitor
+  const navigate = (step: 1 | -1) => {
+    setPlaying(false)
+    go(step)
+  }
+
+  const work = projects[index]
+
+  return (
+    <section
+      className="carousel"
+      aria-roledescription="carousel"
+      aria-label="More projects"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+    >
+      <div className="carousel-viewport" aria-live={playing ? 'off' : 'polite'}>
+        <div
+          className={direction ? `carousel-slide carousel-slide-${direction}` : 'carousel-slide'}
+          key={index}
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`${index + 1} of ${count}`}
+        >
+          <ProjectRow work={work} />
+        </div>
+      </div>
+      {count > 1 && (
+        <div className="carousel-controls">
+          <button className="carousel-button" onClick={() => navigate(-1)} aria-label="Previous project">
+            ↑ prev
+          </button>
+          <button className="carousel-button" onClick={() => navigate(1)} aria-label="Next project">
+            ↓ next
+          </button>
+          <button
+            className="carousel-button"
+            onClick={() => setPlaying(p => !p)}
+            aria-label={playing ? 'Pause carousel' : 'Play carousel'}
+          >
+            {playing ? 'pause' : 'play'}
+          </button>
+          <span className="carousel-count" aria-hidden="true">
+            {index + 1} / {count}
+          </span>
+        </div>
+      )}
+    </section>
+  )
+}
 
 function App() {
   // index.html sets data-dark before first paint
@@ -102,41 +226,19 @@ function App() {
         </h2>
 
         <div className="work-list">
-          {WORK.map(work => (
-            <div className="work-row" key={work.name}>
-              <div className="work-header">
-                <h3 className="work-title">
-                  {work.url ? (
-                    <a href={work.url} target="_blank" rel="noopener noreferrer">
-                      {work.name}
-                    </a>
-                  ) : (
-                    work.name
-                  )}
-                </h3>
-                {work.url && <span className="work-arrow" aria-hidden="true">→</span>}
-              </div>
-              <div className="work-details">
-                <div className="work-blurb">{work.blurb}</div>
-                {work.stats.length > 0 && (
-                  <dl className="work-stats">
-                    {work.stats.map(stat => (
-                      <div className="stat" key={stat.label}>
-                        <dt className="stat-label">{stat.label}</dt>
-                        <dd className="stat-value">{stat.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
-                <div className="work-tags">
-                  {work.tags.map(tag => (
-                    <span className="tag" key={tag}>{tag}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
+          {FEATURED.map(work => (
+            <ProjectRow work={work} key={work.name} />
           ))}
         </div>
+
+        {MORE.length > 0 && (
+          <>
+            <h2 className="section-title">
+              <span aria-hidden="true">─── </span>More Projects<span aria-hidden="true"> ───</span>
+            </h2>
+            <ProjectCarousel projects={MORE} />
+          </>
+        )}
 
         <footer className="footer">
           <span className="footer-left">© 2026 {NAME}</span>

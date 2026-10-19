@@ -241,6 +241,72 @@
   content: '#';
 }
 
+/* ─── More projects carousel ─── */
+
+.work-list + .section-title {
+  margin-top: 48px;
+}
+
+.carousel-viewport {
+  overflow: hidden;
+}
+
+.carousel-slide-up {
+  animation: slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.carousel-slide-down {
+  animation: slide-down 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slide-up {
+  from { transform: translateY(32px); opacity: 0; }
+}
+
+@keyframes slide-down {
+  from { transform: translateY(-32px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-slide-up,
+  .carousel-slide-down {
+    animation: none;
+  }
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.carousel-button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.carousel-button:hover {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.carousel-count {
+  margin-left: auto;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
 /* ─── Footer ─── */
 
 .footer {
@@ -261,6 +327,10 @@
 @media (pointer: coarse) {
   .social-links {
     gap: 12px;
+  }
+
+  .carousel-button {
+    min-height: 44px;
   }
 
   .social-link {
